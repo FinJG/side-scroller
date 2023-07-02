@@ -46,6 +46,7 @@ grass_right_pillar = pygame.image.load("sprites/grass/grass_right_pillar.png")
 grass_left_pillar = pygame.image.load("sprites/grass/grass_left_pillar.png")
 grass_air = pygame.image.load("sprites/grass/grass_air.png")
 
+player = pygame.image.load("sprites/player/player.png")
 
 def scale_image(image, x, y):
     image_scaled = pygame.transform.scale(image, (tile_size * render_scale_x, tile_size * render_scale_y))
@@ -93,7 +94,7 @@ while True:
     render_scale_y = math.ceil(WORLD_HEIGHT / rendering_height)
 
     player.resize(tile_size, render_scale_x, render_scale_y)
-    player.update(dt, tile_size, render_scale_x, render_scale_y, world)    
+    player.update(dt, tile_size, world)    
 
     for ix, x in enumerate(rendering):
         for iy, y in enumerate(x):
@@ -117,7 +118,6 @@ while True:
                 elif surrounding[0][1] and surrounding[2][1]:
                     screen.blit(*scale_image(grass_1, ix, iy))
 
-
                 elif surrounding[2][1] and surrounding[1][1] and not surrounding[1][0]:
                     screen.blit(*scale_image(grass_left_pillar, ix, iy))
 
@@ -138,8 +138,6 @@ while True:
 
                 elif surrounding[1][0]:
                     screen.blit(*scale_image(grass_bottom, ix, iy))
-
-
 
                 else:
                     screen.blit(*scale_image(grass_1, ix, iy))
