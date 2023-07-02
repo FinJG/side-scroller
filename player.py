@@ -24,29 +24,33 @@ class Player(pygame.sprite.Sprite):
             if world[(self.rect.x // tile_size), (self.rect.y // tile_size)] == 0:
                 self.rect.x -= 200 * dt
         
-        if world[math.ceil(self.rect.x // tile_size), math.ceil(self.rect.y // tile_size)] != 0:
-            self.rect.x = ((self.rect.x // tile_size) + 1) * tile_size
+            if world[math.ceil(self.rect.x // tile_size), math.ceil(self.rect.y // tile_size)] != 0:
+                self.rect.x = ((self.rect.x // tile_size) + 1) * tile_size
 
         if keys[pygame.K_d]:
             if world[(self.rect.x // tile_size) + 1, (self.rect.y // tile_size)] == 0:
                 self.rect.x += 200 * dt
             
 
-        if world[math.ceil(self.rect.x // tile_size), math.ceil(self.rect.y // tile_size)] != 0:
-            self.rect.x = self.rect.x // tile_size * tile_size
-                
+            if world[math.ceil(self.rect.x // tile_size), math.ceil(self.rect.y // tile_size)] != 0:
+                self.rect.x = self.rect.x // tile_size * tile_size
+                    
         if keys[pygame.K_w]:
-            self.rect.y -= 600 * dt
+            if world[(self.rect.x // tile_size), (self.rect.y // tile_size)] == 0:
+                self.rect.y -= 300 * dt
 
+            if world[math.ceil(self.rect.x // tile_size), math.ceil(self.rect.y // tile_size)] != 0:
+                self.rect.y = ((self.rect.y // tile_size) + 1) * tile_size
 
+        else:
+            if world[(self.rect.x // tile_size), (self.rect.y // tile_size) + 1] == 0:
+                
+                self.rect.y += 300 * dt
+                
+                if world[math.ceil(self.rect.x / tile_size), math.ceil(self.rect.y / tile_size)] != 0:
+                    self.rect.y = self.rect.y // tile_size * tile_size
+                    
 
-        if world[(self.rect.x // tile_size), (self.rect.y // tile_size) + 1] == 0:
-            
-            self.rect.y += 300 * dt
-        
-        if world[math.ceil(self.rect.x / tile_size), math.ceil(self.rect.y / tile_size)] != 0:
-            self.rect.y = self.rect.y // tile_size * tile_size
-            
 
     def draw(self, screen, render_scale_x, render_scale_y):
         screen.blit(self.image, ((self.rect.x * render_scale_x), (self.rect.y * render_scale_y) ))
