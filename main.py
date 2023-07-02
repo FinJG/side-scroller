@@ -41,12 +41,33 @@ grass_outside = pygame.image.load("sprites/grass/grass_outside.png")
 grass_top = pygame.image.load("sprites/grass/grass_top.png")
 grass_pillar = pygame.image.load("sprites/grass/grass_pillar.png")
 grass_bottom = pygame.image.load("sprites/grass/grass_bottom.png")
-grass_bottom_pillar = pygame.image.load("sprites/grass/grass_bottom_pillar.png")
+grass_pillar_bottom = pygame.image.load("sprites/grass/grass_pillar_bottom.png")
 grass_right_pillar = pygame.image.load("sprites/grass/grass_right_pillar.png")
 grass_left_pillar = pygame.image.load("sprites/grass/grass_left_pillar.png")
 grass_air = pygame.image.load("sprites/grass/grass_air.png")
+grass_cross = pygame.image.load("sprites/grass/grass_cross.png")
+grass_pillar_connect_right = pygame.image.load("sprites/grass/pillar_connect_right.png")
 
 player = pygame.image.load("sprites/player/player.png")
+
+grass_images = {
+    (False, False, False, False): grass_outside,
+    (True, False, False, True): grass_right,
+    (False, False, True, True): grass_left,
+    (False, False, False, True): grass_top,
+    (False, True, False, True): grass_pillar,
+    (False, True, True, True): grass_pillar_connect_right,
+    (True, True, True, True): grass_cross,
+    (True, True, True, False): grass_pillar_bottom,
+    (True, False, True, False): grass_air,
+    (True, False, True, True): grass_1,
+    (True, False, False, False): grass_right_pillar,
+    (False, False, True, False): grass_left_pillar,
+    (False, True, False, False): grass_bottom,
+
+}
+
+
 
 def scale_image(image, x, y):
     image_scaled = pygame.transform.scale(image, (tile_size * render_scale_x, tile_size * render_scale_y))
@@ -55,11 +76,15 @@ def scale_image(image, x, y):
     return image_scaled, image_rect
 
 def check_neighbours(x, y, nums):
-    check = [[False, False, False], [False, False, False], [False, False, False]]
-    for ix in range(x - 1, x + 2):
-        for iy in range(y - 1, y + 2):
-            if world[ix, iy] in nums:
-                check[ix - x + 1][iy - y + 1] = True
+    check = [False, False, False, False]
+    if world[x - 1, y] in nums:
+        check[0] = True
+    if world[x, y - 1] in nums:
+        check[1] = True        
+    if world[x + 1, y] in nums:
+        check[2] = True
+    if world[x, y + 1] in nums:
+        check[3] = True
     return check
             
 player = Player()
@@ -105,40 +130,8 @@ while True:
                 screen.blit(*scale_image(dirt_1, ix, iy))
             elif y == 2:
                 surrounding = check_neighbours(ix, iy, (2, 1))
-
-                if not surrounding[0][1] and not surrounding[2][1] and not surrounding[1][0] and not surrounding[1][2]:
-                    screen.blit(*scale_image(grass_outside, ix, iy))
-
-                elif surrounding[0][1] and surrounding[1][1] and surrounding[2][1] and not surrounding[1][0] and not surrounding[1][2]:
-                    screen.blit(*scale_image(grass_air, ix, iy))
-
-                elif surrounding[0][1] and surrounding[1][1] and surrounding[2][1] and surrounding[1][0]:
-                    screen.blit(*scale_image(grass_bottom_pillar, ix, iy)) 
-
-                elif surrounding[0][1] and surrounding[2][1]:
-                    screen.blit(*scale_image(grass_1, ix, iy))
-
-                elif surrounding[2][1] and surrounding[1][1] and not surrounding[1][0]:
-                    screen.blit(*scale_image(grass_left_pillar, ix, iy))
-
-                elif surrounding[0][1] and surrounding[1][1] and not surrounding[1][2]:
-                    screen.blit(*scale_image(grass_right_pillar, ix, iy))
-                                      
-                elif surrounding[0][1] and not surrounding[2][1] and not surrounding[1][0] and not surrounding[1][2]:
-                    screen.blit(*scale_image(grass_right, ix, iy))
-
-                elif surrounding[2][1] and not surrounding[0][1]:
-                    screen.blit(*scale_image(grass_left, ix, iy))
-
-                elif surrounding[1][2] and not surrounding[1][0]:
-                    screen.blit(*scale_image(grass_top, ix, iy))
-
-                elif surrounding[1][2]:
-                    screen.blit(*scale_image(grass_pillar, ix, iy))
-
-                elif surrounding[1][0]:
-                    screen.blit(*scale_image(grass_bottom, ix, iy))
-
+                if grass_images.get(tuple(surrounding)):
+                    screen.blit(*scale_image(grass_images.get(tuple(surrounding)), ix, iy))
                 else:
                     screen.blit(*scale_image(grass_1, ix, iy))
 
