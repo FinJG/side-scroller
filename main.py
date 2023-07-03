@@ -6,6 +6,8 @@ import math
 
 from player import Player
 
+import images
+
 pygame.init()
 
 # Constants
@@ -14,10 +16,14 @@ FPS = 60
 
 # Variables
 screen = pygame.display.set_mode(SCREEN_SIZE)
+display = pygame.Surface((512, 512))
 clock = pygame.time.Clock()
 dt = 0
-# Classes
-
+rendering_x = 0
+rendering_y = 0
+rendering_width = 16
+rendering_height = 16
+player = Player()
 
 # Pixel array
 tile_size = 16
@@ -45,56 +51,42 @@ player = Player()
 
 # Game loop
 while True:
+    display.fill((20, 150, 230))
+
     # Event loop
-    screen.fill((20, 150, 230))
-
-    rendering_x = 0
-    rendering_y = 0
-    rendering_width = 16
-    rendering_height = 16
-
-    rendering = world[rendering_x:rendering_x + rendering_width, rendering_y:rendering_y + rendering_height]
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
     # Update
-
-    if pygame.mouse.get_pressed()[0]:
-        x, y = pygame.mouse.get_pos()
-        x = (x // (tile_size * render_scale_x)) 
-        y = (y // (tile_size * render_scale_y))
-
-        world[x, y] = 2
-
-    render_scale_x = math.ceil(WORLD_WIDTH / rendering_width)
-    render_scale_y = math.ceil(WORLD_HEIGHT / rendering_height)
-
-    player.resize(tile_size, render_scale_x, render_scale_y)
-    player.update(dt, tile_size, world)    
-
+    rendering = world[rendering_x:rendering_x + rendering_width, rendering_y:rendering_y + rendering_height]
+    collision_tiles = []
     for ix, x in enumerate(rendering):
         for iy, y in enumerate(x):
 
             if y == 0:
                 pass
+
             elif y == 1:
-                screen.blit(*scale_image(dirt_1, ix, iy))
+                display.blit(images.dirt_1, (ix * tile_size, iy * tile_size))
             elif y == 2:
-                surrounding = check_neighbours(ix, iy, (2, 1))
-                if grass_images.get(tuple(surrounding)):
-                    screen.blit(*scale_image(grass_images.get(tuple(surrounding)), ix, iy))
+                surrounding = check_neighbours(ix, iy, [1, 2])
+                if surrounding == (True, True, True, True):
+                    rendering[ix, iy] = 1
+                    display.blit(images.dirt_1, (ix * tile_size, iy * tile_size))
                 else:
-                    screen.blit(*scale_image(grass_1, ix, iy))
+                    display.blit(images.grass_images.get(surrounding, images.grass_inside), (ix * tile_size, iy * tile_size))
+
+            if y != 0:
+                collision_tiles.append(pygame.Rect(ix * tile_size, iy * tile_size, tile_size, tile_size))
+
 
 
     # Draw
+    display.blit(player.image, (player.rect.x, player.rect.y))   
+    screen.blit(pygame.transform.scale(display, SCREEN_SIZE), (0, 0))
 
-    player.draw(screen, render_scale_x, render_scale_y)
-
-    # screen.blit(render_surface, (0, 0))
     # Flip
     pygame.display.update()
     dt = clock.tick(FPS) / 1000
