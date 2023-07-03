@@ -25,6 +25,11 @@ grass_left_wall = pygame.image.load("sprites/grass/grass_left_wall.png")
 player_right = pygame.image.load("sprites/player/player_right.png") 
 player_left = pygame.image.load("sprites/player/player_left.png")
 
+player_right_rleg = pygame.image.load("sprites/player/player_right_rleg.png")
+player_right_lleg = pygame.image.load("sprites/player/player_right_lleg.png")
+player_left_rleg = pygame.image.load("sprites/player/player_left_rleg.png")
+player_left_lleg = pygame.image.load("sprites/player/player_left_lleg.png")
+
 grass_images = {
     (False, False, False, False): grass_outside,
     (True, False, False, True): grass_right,
