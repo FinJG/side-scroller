@@ -1,14 +1,15 @@
 import pygame
 import math
+import images
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((32, 32))
+        self.image = images.player_right
 
         self.base_width = self.image.get_width() / 2
         self.base_height = self.image.get_height() /2 
-        self.image.fill((255, 10, 20))
+        # self.image.fill((255, 10, 20))
         self.rect = self.image.get_rect()
         self.player_movement = [0, 0]
         self.player_y_momentum = 0
@@ -24,8 +25,10 @@ class Player(pygame.sprite.Sprite):
 
         self.player_movement = [0, 0]
         if keys[pygame.K_d]:
+            self.image = images.player_right
             self.player_movement[0] += 300 * dt
         if keys[pygame.K_a]:
+            self.image = images.player_left
             self.player_movement[0] -= 300 * dt
 
         self.player_movement[1] += self.player_y_momentum

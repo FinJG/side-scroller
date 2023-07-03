@@ -15,13 +15,15 @@ grass_left_pillar = pygame.image.load("sprites/grass/grass_left_pillar.png")
 grass_air = pygame.image.load("sprites/grass/grass_air.png")
 grass_cross = pygame.image.load("sprites/grass/grass_cross.png")
 grass_pillar_connect_right = pygame.image.load("sprites/grass/pillar_connect_right.png")
-player = pygame.image.load("sprites/player/player.png")
 grass_right_wall = pygame.image.load("sprites/grass/grass_right_wall.png")
 grass_inside = pygame.image.load("sprites/grass/grass_inside.png")
 grass_bottom_right = pygame.image.load("sprites/grass/grass_bottom_right.png")
 grass_bottom_left = pygame.image.load("sprites/grass/grass_bottom_left.png")
 grass_air_bottom = pygame.image.load("sprites/grass/grass_air_bottom.png")
 grass_left_wall = pygame.image.load("sprites/grass/grass_left_wall.png")
+
+player_right = pygame.image.load("sprites/player/player_right.png") 
+player_left = pygame.image.load("sprites/player/player_left.png")
 
 grass_images = {
     (False, False, False, False): grass_outside,
