@@ -26,54 +26,8 @@ WORLD_HEIGHT = HEIGHT // tile_size
 
 world = numpy.zeros((WORLD_WIDTH, WORLD_HEIGHT), dtype=int)
 
-world[0:WORLD_WIDTH, WORLD_HEIGHT // 4:WORLD_HEIGHT] = 1
-world[0:WORLD_WIDTH, WORLD_HEIGHT // 4] = 2
-
-world[5:WORLD_WIDTH // 2, WORLD_HEIGHT // 4] = 0
-world[2][12] = 0
-
-dirt_1 = pygame.image.load("sprites/dirt_1.png")
-
-grass_1 = pygame.image.load("sprites/grass/grass_1.png")
-grass_left = pygame.image.load("sprites/grass/grass_left.png")
-grass_right = pygame.image.load("sprites/grass/grass_right.png")
-grass_outside = pygame.image.load("sprites/grass/grass_outside.png")
-grass_top = pygame.image.load("sprites/grass/grass_top.png")
-grass_pillar = pygame.image.load("sprites/grass/grass_pillar.png")
-grass_bottom = pygame.image.load("sprites/grass/grass_bottom.png")
-grass_pillar_bottom = pygame.image.load("sprites/grass/grass_pillar_bottom.png")
-grass_right_pillar = pygame.image.load("sprites/grass/grass_right_pillar.png")
-grass_left_pillar = pygame.image.load("sprites/grass/grass_left_pillar.png")
-grass_air = pygame.image.load("sprites/grass/grass_air.png")
-grass_cross = pygame.image.load("sprites/grass/grass_cross.png")
-grass_pillar_connect_right = pygame.image.load("sprites/grass/pillar_connect_right.png")
-
-player = pygame.image.load("sprites/player/player.png")
-
-grass_images = {
-    (False, False, False, False): grass_outside,
-    (True, False, False, True): grass_right,
-    (False, False, True, True): grass_left,
-    (False, False, False, True): grass_top,
-    (False, True, False, True): grass_pillar,
-    (False, True, True, True): grass_pillar_connect_right,
-    (True, True, True, True): grass_cross,
-    (True, True, True, False): grass_pillar_bottom,
-    (True, False, True, False): grass_air,
-    (True, False, True, True): grass_1,
-    (True, False, False, False): grass_right_pillar,
-    (False, False, True, False): grass_left_pillar,
-    (False, True, False, False): grass_bottom,
-
-}
-
-
-
-def scale_image(image, x, y):
-    image_scaled = pygame.transform.scale(image, (tile_size * render_scale_x, tile_size * render_scale_y))
-    image_rect = image_scaled.get_rect()
-    image_rect.topleft = ((x * tile_size) * render_scale_x, (y * tile_size) * render_scale_y)  
-    return image_scaled, image_rect
+world[0:WORLD_WIDTH, WORLD_HEIGHT // 3:WORLD_HEIGHT] = 1
+world[0:WORLD_WIDTH, WORLD_HEIGHT // 3] = 2
 
 def check_neighbours(x, y, nums):
     check = [False, False, False, False]
