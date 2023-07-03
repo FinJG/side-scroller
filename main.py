@@ -1,8 +1,6 @@
 import pygame
 import sys
-import random
 import numpy
-import math
 
 from player import Player
 
@@ -74,6 +72,15 @@ while True:
             if y != 0:
                 collision_tiles.append(pygame.Rect(ix * tile_size, iy * tile_size, tile_size, tile_size))
 
+    player.update(dt, collision_tiles)
+
+    if pygame.mouse.get_pressed()[0]:
+        x, y = pygame.mouse.get_pos()
+        multiplier = WIDTH / display.get_width()
+        x = int((x / multiplier) // tile_size)
+        y = int((y / multiplier) // tile_size)
+        if (x, y) not in player.get_touching(tile_size):
+            world[x, y] = 2
 
 
     # Draw
