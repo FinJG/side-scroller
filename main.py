@@ -26,7 +26,7 @@ rendering_height = 16
 player = Player()
 
 # Pixel array
-tile_size = 16
+tile_size = 32
 WORLD_WIDTH = WIDTH // tile_size
 WORLD_HEIGHT = HEIGHT // tile_size
 
@@ -37,18 +37,11 @@ world[0:WORLD_WIDTH, WORLD_HEIGHT // 3] = 2
 
 def check_neighbours(x, y, nums):
     check = [False, False, False, False]
-    if world[x - 1, y] in nums:
-        check[0] = True
-    if world[x, y - 1] in nums:
-        check[1] = True        
-    if world[x + 1, y] in nums:
-        check[2] = True
-    if world[x, y + 1] in nums:
-        check[3] = True
-    return check
+    for i, v in enumerate([[-1, 0], [0, -1], [1, 0], [0, 1]]):
+        if world[x + v[0], y + v[1]] in nums:
+            check[i] = True
+    return tuple(check)
             
-player = Player()
-
 # Game loop
 while True:
     display.fill((20, 150, 230))
