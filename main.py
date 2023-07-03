@@ -3,6 +3,7 @@ import sys
 import numpy
 
 from player import Player
+from world import World
 
 import images
 
@@ -17,26 +18,15 @@ screen = pygame.display.set_mode(SCREEN_SIZE)
 display = pygame.Surface((512, 512))
 clock = pygame.time.Clock()
 dt = 0
-rendering_x = 0
-rendering_y = 0
-rendering_width = 16
-rendering_height = 16
+
 player = Player()
-
-# Pixel array
-tile_size = 32
-WORLD_WIDTH = WIDTH // tile_size
-WORLD_HEIGHT = HEIGHT // tile_size
-
-world = numpy.zeros((WORLD_WIDTH, WORLD_HEIGHT), dtype=int)
-
-world[0:WORLD_WIDTH, WORLD_HEIGHT // 3:WORLD_HEIGHT] = 1
-world[0:WORLD_WIDTH, WORLD_HEIGHT // 3] = 2
+world = World(screen)
+world.generate()
 
 def check_neighbours(x, y, nums):
     check = [False, False, False, False]
     for i, v in enumerate([[-1, 0], [0, -1], [1, 0], [0, 1]]):
-        if world[x + v[0], y + v[1]] in nums:
+        if world.array[x + v[0], y + v[1]] in nums:
             check[i] = True
     return tuple(check)
             
@@ -49,16 +39,19 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_r:
+                world = World(screen)
+                world.generate()
 
     # Update
-    rendering = world[rendering_x:rendering_x + rendering_width, rendering_y:rendering_y + rendering_height]
+    rendering = world.get_rendering()
     collision_tiles = []
+    tile_size = world.tile_size
     for ix, x in enumerate(rendering):
         for iy, y in enumerate(x):
-
             if y == 0:
                 pass
-
             elif y == 1:
                 display.blit(images.dirt_1, (ix * tile_size, iy * tile_size))
             elif y == 2:
@@ -68,11 +61,11 @@ while True:
                     display.blit(images.dirt_1, (ix * tile_size, iy * tile_size))
                 else:
                     display.blit(images.grass_images.get(surrounding, images.grass_inside), (ix * tile_size, iy * tile_size))
-
             if y != 0:
                 collision_tiles.append(pygame.Rect(ix * tile_size, iy * tile_size, tile_size, tile_size))
 
-    player.update(dt, collision_tiles)
+
+    player.update(collision_tiles, dt)
 
     if pygame.mouse.get_pressed()[0]:
         x, y = pygame.mouse.get_pos()
@@ -80,11 +73,11 @@ while True:
         x = int((x / multiplier) // tile_size)
         y = int((y / multiplier) // tile_size)
         if (x, y) not in player.get_touching(tile_size):
-            world[x, y] = 2
+            world.array[x, y] = 2
 
 
     # Draw
-    display.blit(player.image, (player.rect.x, player.rect.y))   
+    player.draw(display)  
     screen.blit(pygame.transform.scale(display, SCREEN_SIZE), (0, 0))
 
     # Flip

@@ -15,26 +15,25 @@ class Player(pygame.sprite.Sprite):
         self.air_timer = 0
 
 
-    def update(self, dt, collision_tiles):
-
-
+    def update(self, collision_tiles, dt):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_w]:
             if self.air_timer < 300 * dt:
                 self.player_y_momentum = -400 * dt
 
-        player_movement = [0, 0]
+        self.player_movement = [0, 0]
         if keys[pygame.K_d]:
-            player_movement[0] += 300 * dt
+            self.player_movement[0] += 300 * dt
         if keys[pygame.K_a]:
-            player_movement[0] -= 300 * dt
-        player_movement[1] += self.player_y_momentum
+            self.player_movement[0] -= 300 * dt
+
+        self.player_movement[1] += self.player_y_momentum
         self.player_y_momentum += 40 * dt
         if self.player_y_momentum > 800 * dt:
             self.player_y_momentum = 800 * dt
         
-        player_rect, collisions = self.move(self.rect, player_movement, collision_tiles)
+        collisions = self.move(collision_tiles)
 
         if collisions['bottom']:
             self.player_y_momentum = 0
@@ -45,16 +44,12 @@ class Player(pygame.sprite.Sprite):
         if collisions['top']:
             self.player_y_momentum = 0 
 
+    def draw(self, display):
+        display.blit(self.image, (self.rect.x, self.rect.y))
 
+    def collision_test(self, tiles):
+        return [tile for tile in tiles if self.rect.colliderect(tile)]
 
-
-
-    def draw(self, screen, render_scale_x, render_scale_y):
-        screen.blit(self.image, ((self.rect.x * render_scale_x), (self.rect.y * render_scale_y) ))
-
-
-    def collision_test(self, rect, tiles):
-        return [tile for tile in tiles if rect.colliderect(tile)]
 
     def get_touching(self, tile_size):
         tile1 = ((self.rect.x // tile_size), (self.rect.y // tile_size))
@@ -63,27 +58,29 @@ class Player(pygame.sprite.Sprite):
         tile4 = (math.ceil(self.rect.x / tile_size), (self.rect.y // tile_size))
         return tuple(set([tile1, tile2, tile3, tile4]))
 
-    def move(self, rect, movement, tiles):
+
+    def move(self, tiles):
         collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
 
-        rect.x += movement[0]
-        hit_list = self.collision_test(rect, tiles)
+        self.rect.x += self.player_movement[0]
+        hit_list = self.collision_test(tiles)
         for tile in hit_list:
-            if movement[0] > 0:
-                rect.right = tile.left
+            if self.player_movement[0] > 0:
+                self.rect.right = tile.left
                 collision_types['right'] = True
-            elif movement[0] < 0:
-                rect.left = tile.right
+            elif self.player_movement[0] < 0:
+                self.rect.left = tile.right
                 collision_types['left'] = True
 
-        rect.y += movement[1]
-        hit_list = self.collision_test(rect, tiles)
+        self.rect.y += self.player_movement[1]
+        hit_list = self.collision_test(tiles)
         for tile in hit_list:
-            if movement[1] > 0:
-                rect.bottom = tile.top
+            if self.player_movement[1] > 0:
+                self.rect.bottom = tile.top
                 collision_types['bottom'] = True
-            elif movement[1] < 0:
-                rect.top = tile.bottom
+            elif self.player_movement[1] < 0:
+                self.rect.top = tile.bottom
                 collision_types['top'] = True
 
-        return rect, collision_types
+        return collision_types
+    
