@@ -14,7 +14,13 @@ class Player(pygame.sprite.Sprite):
         self.player_movement = [0, 0]
         self.player_y_momentum = 0
         self.air_timer = 0
+        self.speed = 100
+        self.count = 0
+        self.left_animation = [images.player_left_rleg, images.player_left_lleg]
+        self.right_animation = [images.player_right_rleg, images.player_right_lleg]
 
+        self.animation_index = False
+        self.direction = 1
 
     def update(self, collision_tiles, dt):
         keys = pygame.key.get_pressed()
@@ -23,13 +29,27 @@ class Player(pygame.sprite.Sprite):
             if self.air_timer < 300 * dt:
                 self.player_y_momentum = -400 * dt
 
+        
+
         self.player_movement = [0, 0]
         if keys[pygame.K_d]:
-            self.image = images.player_right
-            self.player_movement[0] += 300 * dt
+            if self.count % 10 == 0:
+                self.image = self.right_animation[self.animation_index]
+                self.animation_index = not self.animation_index
+
+            self.player_movement[0] += self.speed * dt
+            self.count += 1
+
+            self.direction = 0
+            
         if keys[pygame.K_a]:
-            self.image = images.player_left
-            self.player_movement[0] -= 300 * dt
+            if self.count % 10 == 0:
+                self.image = self.left_animation[self.animation_index]
+                self.animation_index = not self.animation_index
+
+            self.player_movement[0] -= self.speed * dt
+            self.count += 1
+            self.direction = 1
 
         self.player_movement[1] += self.player_y_momentum
         self.player_y_momentum += 40 * dt
