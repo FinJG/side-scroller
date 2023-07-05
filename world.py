@@ -1,6 +1,4 @@
-import pygame
 import numpy
-
 
 class World():
     def __init__(self, screen) -> None:
@@ -11,7 +9,6 @@ class World():
         self.tile_size = 32
         self.WORLD_WIDTH = screen.get_width() // self.tile_size
         self.WORLD_HEIGHT = screen.get_height() // self.tile_size
-
         self.array = numpy.zeros((self.WORLD_WIDTH, self.WORLD_HEIGHT), dtype=int)
 
     def generate(self):
@@ -20,3 +17,4 @@ class World():
 
     def get_rendering(self):
         return self.array[self.rendering_x:self.rendering_x + self.rendering_width, self.rendering_y:self.rendering_y + self.rendering_height]
+    

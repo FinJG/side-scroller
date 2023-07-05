@@ -1,24 +1,20 @@
 import pygame
-import math
 import sprite_handler
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = sprite_handler.player_right
-
-        self.base_width = self.image.get_width() / 2
-        self.base_height = self.image.get_height() /2 
+        self.image = sprite_handler.animation_dict["idle"].frames[0]
         self.rect = self.image.get_rect()
         self.player_movement = [0, 0]
         self.player_y_momentum = 0
         self.air_timer = 0
         self.speed = 100
-        self.count = 0
-
-
-        self.animation_index = False
         self.direction = 1
+        self.moving = False
+        self.breaking = False
+        self.grid_x = 0
+        self.grid_y = 0
 
     def update(self, collision_tiles, dt):
         keys = pygame.key.get_pressed()
@@ -31,24 +27,26 @@ class Player(pygame.sprite.Sprite):
 
         self.player_movement = [0, 0]
 
+        self.moving = False
         if keys[pygame.K_d]:
-            # if self.count % 10 == 0:
-            #     self.image = self.right_animation[self.animation_index]
-            #     self.animation_index = not self.animation_index
-
+            sprite_handler.animate(self, sprite_handler.animation_dict["walking_right"], dt)
+            self.moving = True
             self.player_movement[0] += self.speed * dt
-            self.count += 1
 
-            self.direction = 0
+            self.direction = 1
             
         if keys[pygame.K_a]:
-            # if self.count % 10 == 0:
-            #     self.image = self.left_animation[self.animation_index]
-            #     self.animation_index = not self.animation_index
-
+            sprite_handler.animate(self, sprite_handler.animation_dict["walking_left"], dt)
+            self.moving = True
             self.player_movement[0] -= self.speed * dt
-            self.count += 1
-            self.direction = 1
+            
+            self.direction = 0
+
+        if not self.moving:
+            self.image = sprite_handler.animation_dict["idle"].frames[self.direction]
+
+        if self.breaking:pass
+            # sprite_handler.animate(self, sprite_handler.animation_dict["breaking_right"], dt)
 
         self.player_movement[1] += self.player_y_momentum
         self.player_y_momentum += 40 * dt
@@ -66,6 +64,8 @@ class Player(pygame.sprite.Sprite):
         if collisions['top']:
             self.player_y_momentum = 0 
 
+        self.breaking = False
+
     def draw(self, display):
         display.blit(self.image, (self.rect.x, self.rect.y))
 
@@ -73,12 +73,17 @@ class Player(pygame.sprite.Sprite):
         return [tile for tile in tiles if self.rect.colliderect(tile)]
 
 
-    def get_touching(self, tile_size):
-        tile1 = ((self.rect.x // tile_size), (self.rect.y // tile_size))
-        tile2 = (math.ceil(self.rect.x / tile_size), math.ceil(self.rect.y / tile_size))
-        tile3 = ((self.rect.x // tile_size), math.ceil(self.rect.y / tile_size))
-        tile4 = (math.ceil(self.rect.x / tile_size), (self.rect.y // tile_size))
-        return tuple(set([tile1, tile2, tile3, tile4]))
+    def get_touching(self):
+        touching = []
+
+        # loops through coordinates around the player (0,0 is the players pos so 1,0 would be to the right of the player)
+        for i in [[0, 0], [0, 1], [1, 1], [1, 0], [0, 2], [-1, 1], [-1, 0]]:
+
+            # adds the of tiles that the player is touching to the list
+            touching.append((self.grid_x + i[0], self.grid_y + i[1]))
+
+        # returns a tuple of the coordinates with no duplicates
+        return tuple(set(touching))
 
 
     def move(self, tiles):
