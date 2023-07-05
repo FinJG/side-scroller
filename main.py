@@ -5,7 +5,7 @@ import numpy
 from player import Player
 from world import World
 
-import images
+import sprite_handler
 
 pygame.init()
 
@@ -18,10 +18,17 @@ screen = pygame.display.set_mode(SCREEN_SIZE)
 display = pygame.Surface((512, 512))
 clock = pygame.time.Clock()
 dt = 0
-
+animations = {}
 player = Player()
 world = World(screen)
 world.generate()
+
+
+# sprite_sheet = pygame.image.load("spritesheet.png").convert_alpha()
+sprite_handler.load_animation("sprites/player/walking_right", 2, animations)
+
+print(animations)
+
 
 def check_neighbours(x, y, nums):
     check = [False, False, False, False]
@@ -53,14 +60,14 @@ while True:
             if y == 0:
                 pass
             elif y == 1:
-                display.blit(images.dirt_1, (ix * tile_size, iy * tile_size))
+                display.blit(sprite_handler.dirt_1, (ix * tile_size, iy * tile_size))
             elif y == 2:
                 surrounding = check_neighbours(ix, iy, [1, 2])
                 if surrounding == (True, True, True, True):
                     rendering[ix, iy] = 1
-                    display.blit(images.dirt_1, (ix * tile_size, iy * tile_size))
+                    display.blit(sprite_handler.dirt_1, (ix * tile_size, iy * tile_size))
                 else:
-                    display.blit(images.grass_images.get(surrounding, images.grass_inside), (ix * tile_size, iy * tile_size))
+                    display.blit(sprite_handler.grass_images.get(surrounding, sprite_handler.grass_images[(False, False, False, False)]), (ix * tile_size, iy * tile_size))
             if y != 0:
                 collision_tiles.append(pygame.Rect(ix * tile_size, iy * tile_size, tile_size, tile_size))
 

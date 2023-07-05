@@ -1,23 +1,21 @@
 import pygame
 import math
-import images
+import sprite_handler
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = images.player_right
+        self.image = sprite_handler.player_right
 
         self.base_width = self.image.get_width() / 2
         self.base_height = self.image.get_height() /2 
-        # self.image.fill((255, 10, 20))
         self.rect = self.image.get_rect()
         self.player_movement = [0, 0]
         self.player_y_momentum = 0
         self.air_timer = 0
         self.speed = 100
         self.count = 0
-        self.left_animation = [images.player_left_rleg, images.player_left_lleg]
-        self.right_animation = [images.player_right_rleg, images.player_right_lleg]
+
 
         self.animation_index = False
         self.direction = 1
@@ -32,10 +30,11 @@ class Player(pygame.sprite.Sprite):
         
 
         self.player_movement = [0, 0]
+
         if keys[pygame.K_d]:
-            if self.count % 10 == 0:
-                self.image = self.right_animation[self.animation_index]
-                self.animation_index = not self.animation_index
+            # if self.count % 10 == 0:
+            #     self.image = self.right_animation[self.animation_index]
+            #     self.animation_index = not self.animation_index
 
             self.player_movement[0] += self.speed * dt
             self.count += 1
@@ -43,9 +42,9 @@ class Player(pygame.sprite.Sprite):
             self.direction = 0
             
         if keys[pygame.K_a]:
-            if self.count % 10 == 0:
-                self.image = self.left_animation[self.animation_index]
-                self.animation_index = not self.animation_index
+            # if self.count % 10 == 0:
+            #     self.image = self.left_animation[self.animation_index]
+            #     self.animation_index = not self.animation_index
 
             self.player_movement[0] -= self.speed * dt
             self.count += 1
