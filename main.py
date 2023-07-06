@@ -35,7 +35,19 @@ def check_neighbours(x, y, nums):
         if world.array[x + v[0], y + v[1]] in nums:
             check[i] = True
     return tuple(check)
-            
+def change_tile(tile):
+    player.breaking = True
+    x, y = pygame.mouse.get_pos()
+    multiplier = WIDTH / display.get_width()
+
+    x = int((x / multiplier) // tile_size) + (world.scroll[0] // tile_size)
+    y = int((y / multiplier) // tile_size) + (world.scroll[1] // tile_size) 
+    if (x, y) not in player.get_touching():
+        try:
+            world.array[x, y] = tile
+        except IndexError:
+            pass
+
 # Game loop
 while True:
     player.grid_x = player.rect.x // world.tile_size + world.rendering_x
@@ -85,25 +97,11 @@ while True:
 
     # break tiles
     if pygame.mouse.get_pressed()[0]:
-        player.breaking = True
-        x, y = pygame.mouse.get_pos()
-        multiplier = WIDTH / display.get_width()
-        x = int((x / multiplier) // tile_size) + world.rendering_x
-        y = int((y / multiplier) // tile_size) + world.rendering_y
-        if (x, y) not in player.get_touching():
-            if world.array[x, y] != 0:
-                world.array[x, y] = 0
+        change_tile(0)
 
     # place tiles
     if pygame.mouse.get_pressed()[2]:
-        player.breaking = True
-        x, y = pygame.mouse.get_pos()
-        multiplier = WIDTH / display.get_width()
-        x = int((x / multiplier) // tile_size) + world.rendering_x
-        y = int((y / multiplier) // tile_size) + world.rendering_y
-        if (x, y) not in player.get_touching():
-            world.array[x, y] = 2
-
+        change_tile(2)
 
     # update player
     player.update(collision_tiles, dt)
