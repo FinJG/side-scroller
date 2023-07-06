@@ -9,19 +9,18 @@ import sprite_handler
 pygame.init()
 
 # Constants
-WIDTH, HEIGHT = SCREEN_SIZE = 768, 768
+WIDTH, HEIGHT = SCREEN_SIZE = 960, 960
 FPS = 60
 
 # Load images
-sprite_handler.load_animation("sprites/player/walking_right", 0.3)
-sprite_handler.load_animation("sprites/player/walking_left", 0.3)
+sprite_handler.load_animation("sprites/player/walking_right", 0.2)
+sprite_handler.load_animation("sprites/player/walking_left", 0.2)
 sprite_handler.load_animation("sprites/player/idle", 1)
 sprite_handler.load_animation("sprites/player/breaking_right", 0.1)
 
-
 # Variables
 screen = pygame.display.set_mode(SCREEN_SIZE)
-display = pygame.Surface((300, 300))
+display = pygame.Surface((512, 512))
 clock = pygame.time.Clock()
 dt = 0
 player = Player()
