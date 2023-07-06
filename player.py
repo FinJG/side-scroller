@@ -9,21 +9,21 @@ class Player(pygame.sprite.Sprite):
         self.player_movement = [0, 0]
         self.player_y_momentum = 0
         self.air_timer = 0
-        self.speed = 100
+        self.speed = 300
         self.direction = 1
         self.moving = False
         self.breaking = False
         self.grid_x = 0
         self.grid_y = 0
 
-    def update(self, collision_tiles, dt):
+
+    def update(self, collision_tiles, dt, world):
         keys = pygame.key.get_pressed()
 
+        # jump if player is on ground
         if keys[pygame.K_w]:
             if self.air_timer < 300 * dt:
                 self.player_y_momentum = -400 * dt
-
-        
 
         self.player_movement = [0, 0]
 
@@ -32,19 +32,18 @@ class Player(pygame.sprite.Sprite):
             sprite_handler.animate(self, sprite_handler.animation_dict["walking_right"], dt)
             self.moving = True
             self.player_movement[0] += self.speed * dt
-
             self.direction = 1
             
         if keys[pygame.K_a]:
             sprite_handler.animate(self, sprite_handler.animation_dict["walking_left"], dt)
             self.moving = True
             self.player_movement[0] -= self.speed * dt
-            
             self.direction = 0
 
         if not self.moving:
             self.image = sprite_handler.animation_dict["idle"].frames[self.direction]
 
+        # work in progress
         if self.breaking:pass
             # sprite_handler.animate(self, sprite_handler.animation_dict["breaking_right"], dt)
 
@@ -60,14 +59,15 @@ class Player(pygame.sprite.Sprite):
             self.air_timer = 0
         else:
             self.air_timer += 1
-
         if collisions['top']:
             self.player_y_momentum = 0 
 
         self.breaking = False
 
+
     def draw(self, display):
         display.blit(self.image, (self.rect.x, self.rect.y))
+
 
     def collision_test(self, tiles):
         return [tile for tile in tiles if self.rect.colliderect(tile)]
@@ -86,6 +86,7 @@ class Player(pygame.sprite.Sprite):
         return tuple(set(touching))
 
 
+    # i stole this whole function from dafluffypotato :)
     def move(self, tiles):
         collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
 

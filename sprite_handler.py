@@ -11,7 +11,10 @@ class Animation():
         self.base_duration = duration
         self.key = key
 
+
 animation_dict = {}
+
+# load animations and add them to the animation_dict
 def load_animation(path, duration):
     for i in os.listdir(path):
         if i.endswith(".png"):
@@ -26,6 +29,7 @@ def load_animation(path, duration):
         raise Exception("Animation already exists")
     
 
+# frame independent animation
 def animate(self, animation, dt):
     animation.duration -= dt
     if animation.duration <= 0:
@@ -36,6 +40,8 @@ def animate(self, animation, dt):
 
     return animation.frames[0]
 
+
+# this is ugly but it works
 grass_neighbors = [
     (False, False, False, False),
     (True, False, False, True),
@@ -55,6 +61,7 @@ grass_neighbors = [
     (False, True, True, False),
 ]
 
+# load grass images
 grass_images = {}
 for i, v in enumerate(grass_neighbors):
     grass_images[v] = pygame.image.load(f"sprites/grass/grass_{i + 1}.png")
