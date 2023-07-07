@@ -27,7 +27,7 @@ def main():
     world = World(WIDTH, HEIGHT, 1024, 32)
     world.generate()
     player = Player(300, 238*world.tile_size) 
-    
+
     def check_neighbours(x, y, nums):
         check = [False, False, False, False]
         for i, v in enumerate([[-1, 0], [0, -1], [1, 0], [0, 1]]):
@@ -84,7 +84,7 @@ def main():
        
         player.grid_x = player.rect.x // world.tile_size 
         player.grid_y = player.rect.y // world.tile_size
-        print(player.grid_x,player.grid_y ,world.WORLD_WIDTH // world.tile_size, world.WORLD_HEIGHT // world.tile_size)
+
         # i really need to get the y axis working
         world.rendering_pos[0] += (player.rect.x - world.rendering_pos[0] - ((display.get_width() / 2) - player.rect.width / 2)) / 3
         world.rendering_pos[1] += (player.rect.y - world.rendering_pos[1] - ((display.get_height() / 2) - player.rect.height / 2)) / 3
