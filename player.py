@@ -2,7 +2,7 @@ import pygame
 import sprite_handler
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, x, y):
         super().__init__()
         self.image = sprite_handler.animation_dict["idle"].frames[0]
         self.rect = self.image.get_rect()
@@ -15,6 +15,8 @@ class Player(pygame.sprite.Sprite):
         self.breaking = False
         self.grid_x = 0
         self.grid_y = 0
+        self.rect.x = x
+        self.rect.y = y
 
 
     def update(self, collision_tiles, dt, world):

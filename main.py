@@ -24,7 +24,7 @@ def main():
     display = pygame.Surface((512, 512))
     clock = pygame.time.Clock()
     dt = 0
-    player = Player()
+    player = Player(300, 0)
     world = World(WIDTH, HEIGHT)
     world.generate()
 
@@ -104,7 +104,7 @@ def main():
                 # reset world if r is pressed
                 if event.key == pygame.K_r:
                     world = World(WIDTH, HEIGHT)
-                    player = Player()
+                    player = Player(300, 0)
                     world.generate()
         
         collision_tiles = []
