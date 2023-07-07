@@ -9,8 +9,8 @@ class World():
         self.rendering_height = 16
         self.CHUNK_SIZE = 8
         self.tile_size = 32
-        self.width = WIDTH // self.tile_size * number_of_chunks_x
-        self.height = HEIGHT // self.tile_size * number_of_chunks_y
+        self.width = (WIDTH // self.tile_size) * number_of_chunks_x
+        self.height = (HEIGHT // self.tile_size) * number_of_chunks_y
 
         self.array = numpy.zeros((self.width, self.height), dtype=int)
         self.scroll = [0, 0]

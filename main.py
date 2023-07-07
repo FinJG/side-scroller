@@ -5,9 +5,10 @@ import pygame
 from player import Player
 from world import World
 import sprite_handler
-
+import time
 def main():
     pygame.init()
+    
 
     # Constants
     WIDTH, HEIGHT = SCREEN_SIZE = 960, 960
@@ -25,8 +26,17 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
     world = World(WIDTH, HEIGHT, 1024, 32)
+    number_of_chunks_x = 32
+    number_of_chunks_y = 32
+
+
+    world = World(WIDTH, HEIGHT, number_of_chunks_x, number_of_chunks_y)
     world.generate()
-    player = Player(300, 238*world.tile_size) 
+
+    player_spawn_x = 32 * world.tile_size
+    player_spawn_y = 13 * world.tile_size
+
+    player = Player(player_spawn_x, player_spawn_y) 
 
     def check_neighbours(x, y, nums):
         check = [False, False, False, False]
@@ -121,8 +131,8 @@ def main():
 
                 # reset world if r is pressed
                 if event.key == pygame.K_r:
-                    world = World(WIDTH, HEIGHT)
-                    player = Player(300, 0)
+                    world = World(number_of_chunks_x, number_of_chunks_y)
+                    player = Player(player_spawn_x, player_spawn_y)
                     world.generate()
         
         collision_tiles = []
