@@ -31,16 +31,20 @@ class Player(pygame.sprite.Sprite):
 
         self.moving = False
         if keys[pygame.K_d]:
-            sprite_handler.animate(self, sprite_handler.animation_dict["walking_right"], dt)
-            self.moving = True
-            self.player_movement[0] += self.speed * dt
-            self.direction = 1
+
+            if self.rect.x < world.width * world.tile_size - self.rect.width: 
+                sprite_handler.animate(self, sprite_handler.animation_dict["walking_right"], dt)
+                self.moving = True
+                self.player_movement[0] += self.speed * dt
+                self.direction = 1
             
         if keys[pygame.K_a]:
-            sprite_handler.animate(self, sprite_handler.animation_dict["walking_left"], dt)
-            self.moving = True
-            self.player_movement[0] -= self.speed * dt
-            self.direction = 0
+            if self.rect.x > 0:
+
+                sprite_handler.animate(self, sprite_handler.animation_dict["walking_left"], dt)
+                self.moving = True
+                self.player_movement[0] -= self.speed * dt
+                self.direction = 0
 
         if not self.moving:
             self.image = sprite_handler.animation_dict["idle"].frames[self.direction]
@@ -50,11 +54,17 @@ class Player(pygame.sprite.Sprite):
             # sprite_handler.animate(self, sprite_handler.animation_dict["breaking_right"], dt)
 
         self.player_movement[1] += self.player_y_momentum
-        self.player_y_momentum += 40 * dt
-        if self.player_y_momentum > 800 * dt:
-            self.player_y_momentum = 800 * dt
+
+        if self.player_y_momentum < 800 * dt:
+            self.player_y_momentum += 40 * dt
         
         collisions = self.move(collision_tiles)
+
+
+        if self.rect.y > world.height * world.tile_size - self.rect.height:
+            self.player_y_momentum = 0
+            self.air_timer = 0
+            self.rect.y = world.height * world.tile_size - self.rect.height
 
         if collisions['bottom']:
             self.player_y_momentum = 0
@@ -65,6 +75,7 @@ class Player(pygame.sprite.Sprite):
             self.player_y_momentum = 0 
 
         self.breaking = False
+
 
 
     def draw(self, display):

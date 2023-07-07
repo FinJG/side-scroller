@@ -24,10 +24,10 @@ def main():
     display = pygame.Surface((512, 512))
     clock = pygame.time.Clock()
     dt = 0
-    player = Player(300, 0)
-    world = World(WIDTH, HEIGHT)
+    world = World(WIDTH, HEIGHT, 1024, 32)
     world.generate()
-
+    player = Player(300, 238*world.tile_size) 
+    
     def check_neighbours(x, y, nums):
         check = [False, False, False, False]
         for i, v in enumerate([[-1, 0], [0, -1], [1, 0], [0, 1]]):
@@ -61,7 +61,8 @@ def main():
 
                 # draw dirt
                 if y == 1: 
-                    display.blit(sprite_handler.dirt_1, (iix, iiy))
+                    dirt = pygame.transform.scale(sprite_handler.dirt_1, (world.tile_size, world.tile_size))
+                    display.blit(dirt, (iix, iiy))
 
                 # draw grass
                 elif y == 2:
@@ -70,24 +71,41 @@ def main():
                     # turn grass into dirt if grass is surrounded by tiles
                     if surrounding == (True, True, True, True): 
                         chunk[ix, iy] = 1
-                        display.blit(sprite_handler.dirt_1, (iix, iiy))
+                        display.blit(pygame.transform.scale(sprite_handler.dirt_1, (world.tile_size, world.tile_size)), (iix, iiy))
                     else:
-                        display.blit(sprite_handler.grass_images.get(surrounding, sprite_handler.grass_images[(False, False, False, False)]), (iix, iiy))
+                        grass = pygame.transform.scale(sprite_handler.grass_images.get(surrounding, sprite_handler.grass_images[(False, False, False, False)]), (world.tile_size, world.tile_size))
+                        display.blit(grass, (iix, iiy))
                 if y != 0:
-                    collision_tiles.append(pygame.Rect((ix + chunk_start_x) * world.tile_size, iiy, world.tile_size, world.tile_size))
+                    collision_tiles.append(pygame.Rect((ix + chunk_start_x) * world.tile_size, (iy + chunk_start_y) * world.tile_size, world.tile_size, world.tile_size))
         return collision_tiles
 
     # Game loop
     while True:
-        player.grid_x = player.rect.x // world.tile_size
+       
+        player.grid_x = player.rect.x // world.tile_size 
         player.grid_y = player.rect.y // world.tile_size
-
+        print(player.grid_x,player.grid_y ,world.WORLD_WIDTH // world.tile_size, world.WORLD_HEIGHT // world.tile_size)
         # i really need to get the y axis working
-        world.rendering_pos[0] += (player.rect.x - world.rendering_pos[0] - ((display.get_width() / 2) - player.rect.width / 2)) / 10
-        # world.rendering_pos[1] += (player.rect.y - world.rendering_pos[1])
+        world.rendering_pos[0] += (player.rect.x - world.rendering_pos[0] - ((display.get_width() / 2) - player.rect.width / 2)) / 3
+        world.rendering_pos[1] += (player.rect.y - world.rendering_pos[1] - ((display.get_height() / 2) - player.rect.height / 2)) / 3
 
         world.scroll = world.rendering_pos.copy()
-        world.scroll = [int(i) for i in world.scroll]
+        world.scroll[0] = int(world.scroll[0])
+        world.scroll[1] = int(world.scroll[1])
+
+        if world.scroll[0] < 0:
+            world.scroll[0] = 0
+
+        if world.scroll[1] < 0:
+            world.scroll[1] = 0
+
+
+        if world.scroll[0] // world.tile_size >= world.width - (display.get_width() // world.tile_size):
+            world.scroll[0] = (world.width - (display.get_width() // world.tile_size)) * world.tile_size
+
+        if world.scroll[1] // world.tile_size > world.height - (display.get_height() // world.tile_size):
+            world.scroll[1] = (world.height - (display.get_height() // world.tile_size)) * world.tile_size
+
 
         # draw sky
         display.fill((20, 150, 230))
@@ -108,20 +126,21 @@ def main():
                     world.generate()
         
         collision_tiles = []
-
         # draw tiles being rendered
-        for jx in range(0, 2):
-            for jy in range(0, 2):
-                thing = world.CHUNK_SIZE * (jx + (player.grid_x // world.CHUNK_SIZE))
-                thing2 = world.CHUNK_SIZE * (jy + (player.grid_y // world.CHUNK_SIZE))
-                if jx == 0:
-                    collision_tiles = draw_chunk(world.array[thing - world.CHUNK_SIZE:thing, thing2 - world.CHUNK_SIZE:thing2], collision_tiles, thing - world.CHUNK_SIZE, 0)
-                collision_tiles = draw_chunk(world.array[thing:world.CHUNK_SIZE + thing,0:world.CHUNK_SIZE + 0], collision_tiles, thing, 0)
+        for jx in range(-3, 3):
+            for jy in range(-3, 3):
+
+                chunk_x = world.CHUNK_SIZE * (jx + player.grid_x // world.CHUNK_SIZE)
+                chunk_y = world.CHUNK_SIZE * (jy + player.grid_y // world.CHUNK_SIZE)
+
+
+                collision_tiles = draw_chunk(world.array[chunk_x:world.CHUNK_SIZE + chunk_x, chunk_y:world.CHUNK_SIZE + chunk_y], collision_tiles, chunk_x, chunk_y)
+
+
 
         # break tiles
         if pygame.mouse.get_pressed()[0]:
             change_tile(0)
-
         # place tiles
         if pygame.mouse.get_pressed()[2]:
             change_tile(2)

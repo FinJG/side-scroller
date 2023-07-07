@@ -20,11 +20,9 @@ def load_animation(path, duration):
         if i.endswith(".png"):
             animation = [pygame.image.load(f"{path}/{i}") for i in os.listdir(path)]
         
-
     if path.split("/")[-1] not in animation_dict:
         animation_dict[path.split("/")[-1]] = Animation(animation, duration, path.split("/")[-1])
         return
-    
     else:
         raise Exception("Animation already exists")
     
@@ -37,9 +35,7 @@ def animate(self, animation, dt):
         animation.frames.append(animation.frames.pop(0))
 
     self.image = animation_dict[animation.key].frames[0]
-
     return animation.frames[0]
-
 
 # this is ugly but it works
 grass_neighbors = [
