@@ -43,20 +43,18 @@ def change_tile(tile):
     x, y = pygame.mouse.get_pos()
     multiplier = WIDTH / display.get_width()
 
-    x = int((x / multiplier) // tile_size) + (world.scroll[0] // tile_size)
-    y = int((y / multiplier) // tile_size) + (world.scroll[1] // tile_size) 
-    if (x, y) not in player.get_touching():
+    x = int((x / multiplier + world.scroll[0]) // tile_size)
+    y = int((y / multiplier + world.scroll[1]) // tile_size)
+    if (x, y) not in player.get_touching() or tile == 0:
         try:
             world.array[x, y] = tile
         except IndexError:
             pass
 
 
-
 def draw_chunk(chunk, chunk_start_x=0, chunk_start_y=0):
     for ix, x in enumerate(chunk):
         for iy, y in enumerate(x):
-            
             iix = (ix + chunk_start_x) * tile_size - world.scroll[0]
             iiy = (iy + chunk_start_y) * tile_size - world.scroll[1]
 
@@ -83,6 +81,7 @@ while True:
     player.grid_x = player.rect.x // world.tile_size
     player.grid_y = player.rect.y // world.tile_size
 
+    # i really need to get the y axis working
     world.rendering_pos[0] += (player.rect.x - world.rendering_pos[0] - ((display.get_width() / 2) - player.rect.width / 2)) / 10
     # world.rendering_pos[1] += (player.rect.y - world.rendering_pos[1])
 
@@ -110,7 +109,6 @@ while True:
     collision_tiles = []
     tile_size = world.tile_size
 
-
     # draw tiles being rendered
     for jx in range(0, 2):
         for jy in range(0, 2):
@@ -118,7 +116,6 @@ while True:
             thing2 = world.CHUNK_SIZE * (jy + (player.grid_y // world.CHUNK_SIZE))
             if jx == 0:
                 draw_chunk(world.array[thing - world.CHUNK_SIZE:thing, thing2 - world.CHUNK_SIZE:thing2], thing - world.CHUNK_SIZE, 0)
-
             draw_chunk(world.array[thing:world.CHUNK_SIZE + thing,0:world.CHUNK_SIZE + 0], thing, 0)
 
     # break tiles
