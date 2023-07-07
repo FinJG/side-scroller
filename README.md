@@ -1,6 +1,6 @@
-## this is a huge work in progress so expect sloppy code and bugs
+## This is a huge work in progress so expect sloppy code and bugs
 
-*that being said, this is just 2D side-scroller game that i'm working on for fun and the sake of learning*
+*that being said, this is just a 2D side-scroller game that I'm working on for fun and the sake of learning*
 
 
 # Controls
@@ -8,7 +8,7 @@
 - `D` - move right
 - `W` - jump
   
-- `MOUSE_RIGHT` - place block
-- `MOUSE_LEFT` - break block
+- `Right Click` - place block
+- `left Click` - break block
 
-## I think thats everything for now. :)
+## I think that's everything for now. :)
