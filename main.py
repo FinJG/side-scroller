@@ -11,7 +11,6 @@ import sprite_handler
 def main():
     pygame.init()
     
-
     # Constants
     WIDTH, HEIGHT = SCREEN_SIZE = 960, 960
     FPS = 60
@@ -25,21 +24,20 @@ def main():
 
     # Variables
     screen = pygame.display.set_mode(SCREEN_SIZE)
-    display = pygame.Surface((512, 512))
     clock = pygame.time.Clock()
     dt = 0
-    world = World(WIDTH, HEIGHT, 1024, 32)
-    number_of_chunks_x = 32
-    number_of_chunks_y = 32
 
+    number_of_chunks_x = 10
+    number_of_chunks_y = 10
 
     world = World(WIDTH, HEIGHT, number_of_chunks_x, number_of_chunks_y)
     world.generate()
-
-    player_spawn_x = 32 * world.tile_size
-    player_spawn_y = 13 * world.tile_size
-
+    player_spawn_x = 4 * world.tile_size
+    player_spawn_y = 1 * world.tile_size
     player = Player(player_spawn_x, player_spawn_y) 
+
+    zoom_x = 512
+    zoom_y = 512
 
     def check_neighbours(x, y, nums):
         check = [False, False, False, False]
@@ -69,6 +67,7 @@ def main():
     def draw_chunk(chunk, collision_tiles, chunk_start_x=0, chunk_start_y=0):
         for ix, x in enumerate(chunk):
             for iy, y in enumerate(x):
+                
                 iix = (ix + chunk_start_x) * world.tile_size - world.scroll[0]
                 iiy = (iy + chunk_start_y) * world.tile_size - world.scroll[1]
 
@@ -116,13 +115,13 @@ def main():
 
     # Game loop
     while True:
-       
+        display = pygame.Surface((zoom_x, zoom_y))
         player.grid_x = player.rect.x // world.tile_size 
         player.grid_y = player.rect.y // world.tile_size
 
         # i really need to get the y axis working
-        world.rendering_pos[0] += (player.rect.x - world.rendering_pos[0] - ((display.get_width() / 2) - player.rect.width / 2)) / 3
-        world.rendering_pos[1] += (player.rect.y - world.rendering_pos[1] - ((display.get_height() / 2) - player.rect.height / 2)) / 3
+        world.rendering_pos[0] += (player.rect.x - world.rendering_pos[0] - ((display.get_width() / 2) - player.rect.width / 2))
+        world.rendering_pos[1] += (player.rect.y - world.rendering_pos[1] - ((display.get_height() / 2) - player.rect.height / 2)) 
 
         world.scroll = world.rendering_pos.copy()
         world.scroll[0] = int(world.scroll[0])
@@ -150,15 +149,20 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            
 
             # get key inputs
             if event.type == pygame.KEYDOWN:
 
                 # reset world if r is pressed
                 if event.key == pygame.K_r:
-                    world = World(number_of_chunks_x, number_of_chunks_y)
+                    world = World(WIDTH, HEIGHT, number_of_chunks_x, number_of_chunks_y)
                     player = Player(player_spawn_x, player_spawn_y)
                     world.generate()
+
+            if event.type == pygame.MOUSEWHEEL:
+                zoom_x += -event.y * 20
+                zoom_y += -event.y * 20
         
         collision_tiles = []
         # draw tiles being rendered
@@ -168,17 +172,14 @@ def main():
                 chunk_x = world.CHUNK_SIZE * (jx + player.grid_x // world.CHUNK_SIZE)
                 chunk_y = world.CHUNK_SIZE * (jy + player.grid_y // world.CHUNK_SIZE)
 
-
                 collision_tiles = draw_chunk(world.array[chunk_x:world.CHUNK_SIZE + chunk_x, chunk_y:world.CHUNK_SIZE + chunk_y], collision_tiles, chunk_x, chunk_y)
-
-
 
         # break tiles
         if pygame.mouse.get_pressed()[0]:
             change_tile(0)
         # place tiles
         if pygame.mouse.get_pressed()[2]:
-            change_tile(2)
+            change_tile(3)
 
         # update player
         player.update(collision_tiles, dt, world)
@@ -191,6 +192,7 @@ def main():
 
         # update screen
         pygame.display.update()
+        print(clock.get_fps())
         dt = clock.tick(FPS) / 1000
 
 if __name__ == "__main__":
