@@ -1,11 +1,13 @@
 import sys
+import random
 
 import pygame
 
 from player import Player
 from world import World
 import sprite_handler
-import time
+
+
 def main():
     pygame.init()
     
@@ -19,6 +21,7 @@ def main():
     sprite_handler.load_animation("sprites/player/walking_left", 0.2)
     sprite_handler.load_animation("sprites/player/idle", 1)
     sprite_handler.load_animation("sprites/player/breaking_right", 0.1)
+    sprite_handler.load_animation("sprites/sand", 0.1)
 
     # Variables
     screen = pygame.display.set_mode(SCREEN_SIZE)
@@ -85,9 +88,31 @@ def main():
                     else:
                         grass = pygame.transform.scale(sprite_handler.grass_images.get(surrounding, sprite_handler.grass_images[(False, False, False, False)]), (world.tile_size, world.tile_size))
                         display.blit(grass, (iix, iiy))
+
+                elif y == 3:
+                    sand((ix + chunk_start_x) * world.tile_size, (iy + chunk_start_y) * world.tile_size)
+
+                    display.blit(pygame.transform.scale(sprite_handler.animation_dict["sand"].frames[1], (world.tile_size, world.tile_size)), (iix, iiy))
+                    
                 if y != 0:
                     collision_tiles.append(pygame.Rect((ix + chunk_start_x) * world.tile_size, (iy + chunk_start_y) * world.tile_size, world.tile_size, world.tile_size))
+
         return collision_tiles
+
+
+    def sand(x, y):
+        direction = random.choice([-1, 1])
+        if world.array[x // world.tile_size, y // world.tile_size + 1] == 0:
+            world.array[x // world.tile_size][y // world.tile_size + 1], world.array[x // world.tile_size][y // world.tile_size] = 3, 0
+
+        elif world.array[x // world.tile_size, y // world.tile_size - 1] == 3 and world.array[x // world.tile_size + (1 * direction), y // world.tile_size] == 0:
+            world.array[x // world.tile_size + (1 * direction)][y // world.tile_size], world.array[x // world.tile_size][y // world.tile_size] = 3, 0
+        
+        elif world.array[x // world.tile_size + (1 * direction), y // world.tile_size + 1] == 0 and world.array[x // world.tile_size + (1 * direction), y // world.tile_size] == 0:
+            if (x // world.tile_size + (1 * direction), y // world.tile_size + 1) == (player.grid_x, player.grid_y) and world.array[x // world.tile_size + ((1 * direction)), y // world.tile_size] == 0:
+                player.rect.x += 1 * direction * world.tile_size
+            world.array[x // world.tile_size + (1 * direction)][y // world.tile_size + 1], world.array[x // world.tile_size][y // world.tile_size] = 3, 0
+
 
     # Game loop
     while True:
@@ -137,8 +162,8 @@ def main():
         
         collision_tiles = []
         # draw tiles being rendered
-        for jx in range(-3, 3):
-            for jy in range(-3, 3):
+        for jx in range(-2, 3):
+            for jy in range(-2, 3):
 
                 chunk_x = world.CHUNK_SIZE * (jx + player.grid_x // world.CHUNK_SIZE)
                 chunk_y = world.CHUNK_SIZE * (jy + player.grid_y // world.CHUNK_SIZE)
